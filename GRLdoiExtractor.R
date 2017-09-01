@@ -10,7 +10,7 @@ GRLdata <-cr_works(filter = c(issn = "0094-8276"),limit = 1000,cursor='*',cursor
 #pull out the dataframe and save it
 GRLDF<-GRLdata$data
 save(GRLDF,file="GRLDF.Rda")
-#GRLDF <- readRDS(file="GRLDF.Rda")
+#load("~/GRLDF.Rda")
 #export a list of dois.
 doi_list <- paste0("doi","/", GRLDF$DOI)
 #then run through rAltmetric (code I have already)

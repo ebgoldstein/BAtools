@@ -18,5 +18,5 @@ raw_metrics <- llply(doi_list, altmetrics, .progress = 'text')
 metric_data <- ldply(raw_metrics, altmetric_data)
 merged_data <-merge(x =GRLDF , y = metric_data, by.y = "doi", by.x = "DOI", all.x = TRUE)
 save(merged_data,file="merged_data.Rda")
-#merged_data <- readRDS(file="merged_data.Rda")
+#load("~/merged_data.Rda")
 #....

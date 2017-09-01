@@ -20,3 +20,9 @@ merged_data <-merge(x =GRLDF , y = metric_data, by.y = "doi", by.x = "DOI", all.
 save(merged_data,file="merged_data.Rda")
 #load("~/merged_data.Rda")
 #....
+#column 104 is the wikipedia column
+#colnames(merged_data[104])
+#find out how many Wikipedia mentions: (1206)
+#sum(merged_data[,104],na.rm=TRUE)
+#find out how many papers (917)
+#sum(!is.na(merged_data[,104]))

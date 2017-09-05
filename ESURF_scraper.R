@@ -75,11 +75,11 @@ R2anon<-nrow(subset(ESURFRevDATA, Rev1Anon==0 & Rev2Anon>=1 & NoReview==FALSE & 
 bothnamed<-nrow(subset(ESURFRevDATA, Rev1Anon==0 & Rev2Anon==0 & NoReview==FALSE & Rev3==0))
 
 #matrix view of results
-Performance <-
+ReviewData <-
   matrix(c(bothanon, R1anon, R2anon, bothnamed),
          nrow = 2,
          dimnames = list("Reviewer 2" = c("Unsigned", "Signed"),
                          "Reviewer 1" = c("Unsigned", "Signed")))
-Performance
+ReviewData
 
 

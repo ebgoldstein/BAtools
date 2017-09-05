@@ -13,27 +13,8 @@ ESURFDF<-ESURFdata$data
 save(ESURFDF,file="ESURFDF.Rda")
 #load("~/ESURFDF.Rda")
 
-ESURFDF["C1_first"] <- NA
-ESURFDF["C2"] <- NA
-ESURFDF["C3"] <- NA
-ESURFDF["C4"] <- NA
-ESURFDF["C5"] <- NA
-ESURFDF["C6"] <- NA
-ESURFDF["C7"] <- NA
-ESURFDF["C8"] <- NA
-ESURFDF["C9"] <- NA
-ESURFDF["C10"] <- NA
-ESURFDF["C11"] <- NA
-ESURFDF["C12"] <- NA
-ESURFDF["C13"] <- NA
-ESURFDF["C14"] <- NA
-ESURFDF["C15"] <- NA
-ESURFDF["C16"] <- NA
-ESURFDF["C17"] <- NA
-ESURFDF["C18"] <- NA
-ESURFDF["C19"] <- NA
-ESURFDF["C20"] <- NA
-ESURFDF["C21"] <- NA
+NewCols = c("C1_first","C2","C3","C4","C5","C6","C7","C8","C9","C10","C11","C12","C13","C14","C15","C16","C17","C18","C19","C20","C21")
+ESURFDF[NewCols] <- NA
 
 IndexOne<-grep("C1_first", colnames(ESURFDF))
 

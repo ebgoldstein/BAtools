@@ -73,7 +73,7 @@ while (i<=nrow(Wikipapers)){
     num_W_edits <-num_W_edits+Nrowstoadd
   }
   
-  #scrape for wiki data (5 is max. or else altemtric.com won;t show all the data w/o a license. need to write a work around here)
+  #need an altmetric license to get >5 mentions, so I'm looking for another way...
   if(Wikipapers[i,"cited_by_wikipedia_count"] < 5){  
   Wikipapers[i:(i+num_W_edits),"W_Pages"]<-althtml %>%
     html_nodes("h3") %>%

@@ -92,4 +92,18 @@ while (i<=nrow(Wikipapers)){
   i=i+1+num_W_edits
   #print(i) #for debugging
 }
+
 save(Wikipapers,file="Wikipapers.Rda")
+
+
+Wikipapers["firstpubdate"] <- NA
+#scrape GRL site for first issued date and put them in the matrix
+for (k in 1:nrow(Wikipapers)){
+    GRL<- read_html(toString(Wikipapers[k,"URL"]))
+   Wikipapers[k,"firstpubdate"]<-GRL %>%
+     html_nodes("#first-published-date") %>%
+     html_text()
+   print(k) #for debugging
+}
+save(Wikipapers,file="Wikipapers.Rda")
+

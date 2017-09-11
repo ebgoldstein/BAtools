@@ -3,9 +3,11 @@ library(RCurl)
 library(gdata)
 library(reshape2)
 
+#get the data from the Nature Geoscience Website
 url <- "http://www.nature.com/ngeo/journal/v10/n9/extref/ngeo3026-s1.xlsx"
 NGEO <- read.xls(url,skip=3)
 
+#rename the columns
 colnames(NGEO)[1] <- "Suggest" #Suggest referees? Y/N
 colnames(NGEO)[2] <- "CAuthor" #corresponding author gender
 colnames(NGEO)[3] <- "SuggRevM" #how many suggested referees are male
@@ -28,6 +30,7 @@ colnames(NGEO)[19] <- "ActualReqF" #Actual referee, suggested, female
 colnames(NGEO)[20] <- "ActualAssignM"   #Actual referee, assigned, male
 colnames(NGEO)[21] <- "ActualAssignF" #Actual referee, assigned, female
 
+#clean by changing 1's and 0's in columns to correspondin author location
 NGEO$CorrespondNA[NGEO$CorrespondNA == 1] <- "North America"
 NGEO$CorrespondSCA[NGEO$CorrespondSCA == 1] <- "South+Central America"
 NGEO$CorrespondEME[NGEO$CorrespondEME == 1] <- "Europe+Middle East"
@@ -44,22 +47,23 @@ NGEO$CorrespondAusNZ[NGEO$CorrespondAusNZ == 0] <- ""
 
 NGEO<-unite(NGEO,CorrespondNA,CorrespondSCA,CorrespondEME,CorrespondAf,CorrespondAs,CorrespondAusNZ,col="CorrAuth",sep="")
 
-#total suggested reviewers.
+#total the number of suggested reviewers.
 NGEO <- mutate(NGEO,Total_Suggested=SuggRevM+SuggRevF+SuggRevA)
 
 #replace all NAs with 0s
 NGEO[is.na(NGEO)] <- 0
 
-#change 'a' to 'u'
+#For author gender, change 'a' to 'u' for unknown
 NGEO$CAuthor <- as.character(NGEO$CAuthor)
 NGEO$CAuthor[NGEO$CAuthor == "a"] <- "u"
 NGEO$CAuthor <- as.factor(NGEO$CAuthor)
 
-# # of men and women authors from different geography
+# plot the # of men and women authors from different geography
 ggplot(data=NGEO) + geom_bar(mapping = aes(x =CAuthor)) + 
   facet_wrap(~CorrAuth) + xlab('Corresponding Author') + 
   ggtitle('Gender of Corresponding Author, by Geography', subtitle = NULL)
 
+#reshape the data
 North <- colSums(NGEO[NGEO$CorrAuth=='North America',7:12])
 Cent <- colSums(NGEO[NGEO$CorrAuth=='South+Central America',7:12])
 EME <- colSums(NGEO[NGEO$CorrAuth=='Europe+Middle East',7:12])
@@ -77,6 +81,6 @@ NGEO.m <- melt(refsuggs,id.vars="CorrAuthGeog")
 #the bar plot of # of corresponding authors that recommended reviewers by geography
 ggplot(data =subset(NGEO,Suggest=="Y")) + geom_bar(mapping = aes(x = CorrAuth)) + xlab('Corresponding Authors (who suggested reviewers) by Geography')
 
-# Suggested reviewer geography by submitting author geography
+# Plot the Suggested reviewer geography by submitting author geography
 ggplot(NGEO.m,aes(x = CorrAuthGeog,y = value)) + 
   geom_bar(aes(fill = variable),stat = "identity",position = "fill") + xlab('Corresponding Author Geography') +ylab('Proportion')

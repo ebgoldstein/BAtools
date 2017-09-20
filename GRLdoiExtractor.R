@@ -3,7 +3,7 @@
 #2) uses raltmetric to get Altmetric.com data for each DOI
 #3) uses rvest to get specific wikipedia edit data for each paper that has a wikipedia mention
 
-#Note: line 76 needs some help
+#Note: line 76 needs some help because when >4 Wikipages are cited, one needs a Altmetric explorer license.
 
 #written by EBG, starting 8/17
 

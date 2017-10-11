@@ -100,6 +100,7 @@ while (i <= nrow(Wikipapers)) {
   
   #need an altmetric license to get >5 mentions, if there are more than 5 mentions,
   #then just fill in the visible mentions and leave the rest blank for hand curation
+  # For GRL (and probably all wiley journals), the work-around is to replace 'www' with 'wiley' in the http address
   
   #scrape for Wikipedia page names
   Wpages <- althtml %>%

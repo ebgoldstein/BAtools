@@ -127,8 +127,41 @@ while (i <= nrow(Wikipapers)) {
 }
 
 save(Wikipapers, file = "Wikipapers.Rda")
+#####
+#pull GRL index terms for each article, up to 5;
+# #http://publications.agu.org/author-resource-center/text-requirements/
+# #http://publications.agu.org/author-resource-center/index-terms/
+# Sometimes more terms seem to be present, but this might be a mix of index terms and keywords??
+# I will select the first 5 
+#
+# Make new columns for these index terms
+Wikipapers["Index_1"] <- NA
+Wikipapers["Index_2"] <- NA
+Wikipapers["Index_3"] <- NA
+Wikipapers["Index_4"] <- NA
+Wikipapers["Index_5"] <- NA
+# 
+IndexOne<-grep("Index_1", colnames(Wikipapers))
+#
+for (k in 1:nrow(Wikipapers)){
+GRL<- read_html(toString(Wikipapers[k,"URL"]))
+IndexTerms<-GRL %>%
+  html_nodes(".article-info__indexed-terms-data") %>%
+  html_text()
+#put them in the dataframe in the correct spot
+if (length(IndexTerms)>0) {
+  if (length(IndexTerms)<=5) {
+    Wikipapers[k,IndexOne:IndexOne:(IndexOne+length(IndexTerms)-1)] <- IndexTerms
+  }
+  else{
+    Wikipapers[k,IndexOne:IndexOne:(IndexOne+4)] <- IndexTerms
+  }
+}
+print(k)
 
-#add the first publciation date from GRL webpage
+######
+  #this needs some help....
+#add the first publication date from GRL webpage
 Wikipapers["firstpubdate"] <- NA
 #scrape GRL site for first issued date and put them in the matrix
 for (k in 1:nrow(Wikipapers)) {

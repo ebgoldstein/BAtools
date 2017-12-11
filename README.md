@@ -1,4 +1,4 @@
-# biblio-and-altimetric-tools
+# biblio-and-altmetric-tools
 Here is my collection of basic code to do simple bibliometric and altmetric tasks 
 
 AltExtractor.R — Get altmetric.com data for a given list of DOIs

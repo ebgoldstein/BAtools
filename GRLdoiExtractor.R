@@ -226,4 +226,34 @@ for (k in 1:nrow(Wikipapers)) {
 
 #Save
 save(Wikipapers,file="Wikipapers.Rda")
+GRLwiki <- Wikipapers
+#load("~/GRLwiki.Rda")
+
+######
+#get the dates in the correct format
+#edit times
+GRLwiki <- mutate(GRLwiki, W_edit_times= as.Date(W_edit_times, format= "%d %B %Y"))
+
+#GRL first pubed date
+GRLwiki <- mutate(GRLwiki, firstpubdate= as.Date(firstpubdate, format= "%d %b %Y"))
+
+######
+
+#create new column 
+GRLwiki["WB_edit_DT"] <- NA
+GRLwiki <- mutate(GRLwiki, WB_edit_DT= as.Date(WB_edit_DT, format= "%d %b %Y"))
+
+#loop through WB_edit_times column,
+for (k in 1:nrow(GRLwiki)) {
+  #if its not a NA:
+  if (!is.na(GRLwiki$WB_edit_times[k])) {
+    #pull out hte string and split it
+    DT <- strsplit(GRLwiki$WB_edit_times[k],'[- ]')[[1]]
+    #paste together the D,M,Y
+    MDY <- paste(DT[5], DT[6], DT[7], sep=" ")
+    #convert to date format "2014-12-17"
+    #paste into new column
+    GRLwiki$WB_edit_DT[k]<- as.Date(MDY, format= "%d %B %Y")
+  }
+  }
 

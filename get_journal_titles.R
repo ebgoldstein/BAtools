@@ -2,8 +2,11 @@ library(stringr)
 library(rcrossref)
 library(tidyverse)
 
-#take Tom's EarthArXiv output, and make a csv with just DOI's, which is named 'LISTOFDOIs.csv'
-#from this, compute the top journals
+#take Tom's EarthArXiv output, 
+
+#https://github.com/narock/preprint_analysis/tree/master/data/eartharxiv
+
+#and make a csv with just DOI's, which is named 'LISTOFDOIs.csv' from this, compute the top journals
 
 doi_data <- read.csv('LISTOFDOIs.csv', header = TRUE, stringsAsFactors=FALSE)
 doilist <- str_remove(doi_data$doi, "https://doi.org/")

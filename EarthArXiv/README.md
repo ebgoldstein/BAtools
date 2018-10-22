@@ -1,2 +1,2 @@
 
-#Some data and a script for EarthArXiv analysis
+Some data and a script for EarthArXiv analysis

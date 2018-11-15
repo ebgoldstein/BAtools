@@ -26,7 +26,7 @@ JGRsN <- c("JGRA","JGRB","JGRES","JGRO","JGRSE","JGRSP","JGRP","JGRcomb")
 
 
 #loop through the separate sections
-for (i in 1:8){
+for (i in 1:7){
 print(i)
 print("DOIs")
 JGRdata <-
@@ -61,13 +61,11 @@ AltmetricData <- bind_rows(results) %>% select(doi, contains("cited"))
 #join
 JGR <- left_join(JGR, AltmetricData, by = "doi")
 
-#rename the file and save it
-nam <- paste(JGRsN[i])
-assign(nam, JGR)
-save(nam, file = paste(JGRsN[i],".Rda", sep = ""))
+# save file
+save(JGR, file = paste(JGRsN[i],".Rda", sep = ""))
 
 }
 
-
 # 
 # #can be sorted by Issue letter
+  

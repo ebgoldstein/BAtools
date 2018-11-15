@@ -1,5 +1,5 @@
 #This code:
-#1) uses rcrossref to get DOI information  for GRL (ISSN 0094-8276).
+#1) uses rcrossref to get DOI information  for JGRs and GRL.
 #2) uses raltmetric to get Altmetric.com data for each DOI
 
 #written by EBG 11/18
@@ -9,18 +9,61 @@ library(rcrossref)
 library(rAltmetric)
 library(tidyverse)
 
-#get all the dois from CrossRef for JGR, which has a print ISSN of 0148-0227
+#get all the dois from CrossRef for JGR, which has a print ISSN of 0148-0227 (until 2012)
+#from 2013 onward, all 7 JGR sections have their own ISSN
+#JGRA  2169-897X
+#JGRB 2169-8953
+#JGRES 2169-9003
+#JGRO 2169-9275
+#JGRSE 2169-9313
+#JGRSP 2169-9380
+#JGRP 2169-9097
+# obtained from: https://www.wiley.com/en-us/search?pq=Journal%20of%20Geophysical%20Research%7Crelevance
+
+
+JGRs <- c("2169-897X","2169-8953","2169-9003","2169-9275","2169-9313","2169-9380","2169-9097")
+JGRsN <- c("JGRA","JGRB","JGRES","JGRO","JGRSE","JGRSP","JGRP")
+
+
+#######
+#Combined 
 JGRdata <-
   cr_works(
-    filter = c(issn = "0148-0227",from_pub_date='1990-01-01'),
+    filter = c(issn = "2169-897X"),
     limit = 1000,
     cursor = '*',
     cursor_max = 100000
   )
 #pull out the dataframe
 JGRDF <- JGRdata$data
-#save the file
-save(JGRDF, file = "JGRDF.Rda")
-
 #subset by title NA
 JGR <- filter(JGRDF, !is.na(title))
+#save the file
+save(JGR, file = "JGRcombDF.Rda")
+
+#loop through the separate sections
+for (i in 1:7){
+print(i)
+JGRdata <-
+  cr_works(
+    filter = c(issn = JGRs[i],from_pub_date='1990-01-01'),
+    limit = 1000,
+    cursor = '*',
+    cursor_max = 100000
+  )
+#pull out the dataframe
+JGRDF <- JGRdata$data
+#subset by title NA
+JGR <- filter(JGRDF, !is.na(title))
+#save the file
+save(JGR, file = paste(JGRsN[i],".Rda", sep = ""))
+}
+
+
+#then run through rAltmetric to get the Altmetric.com metrics
+doilist <- JGR$doi
+#using the safe version from K. Ram: https://gist.github.com/karthik/78016fc78d52156561f5f543defb7ec0
+safe_altmetrics <- purrr::safely(altmetrics, otherwise = NULL)
+alm <- function(x)  safe_altmetrics(doi = x)
+requests <- map(doilist, alm) 
+

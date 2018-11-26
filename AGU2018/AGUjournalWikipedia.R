@@ -89,20 +89,21 @@ Journal <- data.frame(year_issued=as.Date(character()),
                  W_mentions_per_year=integer(), 
                  section=character(),
                  stringsAsFactors=FALSE) 
+
 load("JGRA.Rda")
-Journal <- getthewikidata(JGR,"A",Journal)
+Journal <- getthewikidata(JGR,"D",Journal)
 load("JGRB.Rda")
-Journal <- getthewikidata(JGR,"B",Journal)
+Journal <- getthewikidata(JGR,"G",Journal)
 load("JGRES.Rda")
-Journal <- getthewikidata(JGR,"ES",Journal)
+Journal <- getthewikidata(JGR,"F",Journal)
 load("JGRO.Rda")
-Journal <- getthewikidata(JGR,"O",Journal)
+Journal <- getthewikidata(JGR,"C",Journal)
 load("JGRP.Rda")
-Journal <- getthewikidata(JGR,"P",Journal)
+Journal <- getthewikidata(JGR,"E",Journal)
 load("JGRSE.Rda")
-Journal <- getthewikidata(JGR,"SE",Journal)
+Journal <- getthewikidata(JGR,"B",Journal)
 load("JGRSP.Rda")
-Journal <- getthewikidata(JGR,"SP",Journal)
+Journal <- getthewikidata(JGR,"A",Journal)
 
 save(Journal, file = "JGRcounts.Rda")
 
@@ -110,7 +111,18 @@ save(Journal, file = "JGRcounts.Rda")
 load("JGRcomb.Rda")
 JGRcomb <- mutate(JGRcomb, year_issued = format(as.Date(substr(JGRcomb$issued, 1, 4), format = "%Y"), "%Y"))
 #next sorrted by the Letter in 'issue'
-JGRcomb<- mutate (JGRcomb, sectionL = substr(JGRcomb$issue, 1, 1))
+JGRcomb<- mutate (JGRcomb, section = substr(JGRcomb$issue, 1, 1))
 #Select only A through G
 target <- c('A','B','C','D','E','F','G')
-Test <- filter(JGRcomb, sectionL %in% target)
+JGRcomb <- filter(JGRcomb, section %in% target)
+
+results <- JGRcomb %>%
+  group_by(year_issued,section) %>%
+  summarise(ms_per_year = n(),
+            W_mentions_per_year = sum(!is.na(cited_by_wikipedia_count >= 1)))
+
+
+#combine and Save
+Journal <- bind_rows(results, Journal)
+Journal <- mutate( Journal, Wiki_Percent = W_mentions_per_year / ms_per_year)
+save(Journal, file = "JGRcounts.Rda")

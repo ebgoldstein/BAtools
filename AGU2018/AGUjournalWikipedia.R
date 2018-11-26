@@ -61,11 +61,56 @@ AltmetricData <- bind_rows(results) %>% select(doi, contains("cited"))
 #join
 JGR <- left_join(JGR, AltmetricData, by = "doi")
 
-# save file
+#rename the file and save it
+nam <- paste(JGRsN[i])
 save(JGR, file = paste(JGRsN[i],".Rda", sep = ""))
 
 }
 
-# 
-# #can be sorted by Issue letter
+# load each sequentially and find year of issued data
+getthewikidata <- function(x,y,z) {
+  JGRsub <-
+    mutate(x, year_issued = format(as.Date(x$created, format = "%Y-%m-%d"), "%Y"))
+  #count numbers of articles in a given year
+  # number of wiki mentions in a given year
+  #put in new DF
+  results <- JGRsub %>%
+    group_by(year_issued) %>%
+    summarise(ms_per_year = n(),
+              W_mentions_per_year = sum(!is.na(cited_by_wikipedia_count >= 1)))
+  results <- add_column(results, section = y)
   
+  z <- rbind(z, results)
+  return(z)
+}
+
+Journal <- data.frame(year_issued=as.Date(character()),
+                 ms_per_year=integer(), 
+                 W_mentions_per_year=integer(), 
+                 section=character(),
+                 stringsAsFactors=FALSE) 
+load("JGRA.Rda")
+Journal <- getthewikidata(JGR,"A",Journal)
+load("JGRB.Rda")
+Journal <- getthewikidata(JGR,"B",Journal)
+load("JGRES.Rda")
+Journal <- getthewikidata(JGR,"ES",Journal)
+load("JGRO.Rda")
+Journal <- getthewikidata(JGR,"O",Journal)
+load("JGRP.Rda")
+Journal <- getthewikidata(JGR,"P",Journal)
+load("JGRSE.Rda")
+Journal <- getthewikidata(JGR,"SE",Journal)
+load("JGRSP.Rda")
+Journal <- getthewikidata(JGR,"SP",Journal)
+
+save(Journal, file = "JGRcounts.Rda")
+
+# The old records need to be sorted by "issued data", which might have Y, YM, or YMD..
+load("JGRcomb.Rda")
+JGRcomb <- mutate(JGRcomb, year_issued = format(as.Date(substr(JGRcomb$issued, 1, 4), format = "%Y"), "%Y"))
+#next sorrted by the Letter in 'issue'
+JGRcomb<- mutate (JGRcomb, sectionL = substr(JGRcomb$issue, 1, 1))
+#Select only A through G
+target <- c('A','B','C','D','E','F','G')
+Test <- filter(JGRcomb, sectionL %in% target)

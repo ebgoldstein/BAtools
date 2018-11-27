@@ -124,5 +124,36 @@ results <- JGRcomb %>%
 
 #combine and Save
 Journal <- bind_rows(results, Journal)
-Journal <- mutate( Journal, Wiki_Percent = W_mentions_per_year / ms_per_year)
+
+#ADD THE DUPLICATE 2012 entries together
+Journal <- Journal %>% group_by(year_issued,section) %>% summarise(ms_per_year = sum(ms_per_year),W_mentions_per_year = sum(W_mentions_per_year) )
+
+Journal <- mutate( Journal, Wiki_Percent = 100* W_mentions_per_year / ms_per_year)
+Journal$year_issued <- strtoi(format(as.Date(Journal$year_issued, format = "%Y"), "%Y"))
+
 save(Journal, file = "JGRcounts.Rda")
+
+#plot percent
+ggplot(Journal, aes(year_issued, Wiki_Percent, color = section)) + 
+  geom_point() +
+  geom_line() +
+  xlab("Year") +
+  ylab("% of Articles with Wikipedia Mentions") +
+  scale_color_hue(name = "Section", labels = c("Space Physics", "Solid Earth", "Oceans", "Atmosphere","Planets", "Earth Surface","Biogeoscience"))
+
+#plot total
+ggplot(Journal, aes(year_issued, W_mentions_per_year, color = section)) + 
+  geom_point() +
+  geom_line() +
+  xlab("Year") +
+  ylab("# of Articles with Wikipedia Mentions") +
+  scale_color_hue(name = "Section", labels = c("Space Physics", "Solid Earth", "Oceans", "Atmosphere","Planets", "Earth Surface","Biogeoscience"))
+
+#plot total papers
+ggplot(Journal, aes(year_issued, ms_per_year, color = section)) + 
+  geom_point() +
+  geom_line() +
+  xlab("Year") +
+  ylab("Articles published per year") +
+  scale_color_hue(name = "Section", labels = c("Space Physics", "Solid Earth", "Oceans", "Atmosphere","Planets", "Earth Surface","Biogeoscience"))
+
